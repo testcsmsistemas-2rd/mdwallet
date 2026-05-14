@@ -311,11 +311,51 @@
 
     </div>
 
+    <div class="language-section">
+      <div class="section">
+        <h3>Admin: Delete user</h3>
+        <label for="deleteUserId">User ID:</label>
+        <input id="deleteUserId" type="text" placeholder="Enter user ID" />
+        <button id="deleteBtn">Delete user</button>
+        <p id="deleteResult" style="margin-top:10px;color:#a33"></p>
+      </div>
+    </div>
+
     <div class="footer">
       © 2026 MD WALLET. All rights reserved.
     </div>
 
   </div>
+
+  <script>
+    (function () {
+      const deleteBtn = document.getElementById('deleteBtn');
+      if (!deleteBtn) return;
+      deleteBtn.addEventListener('click', async function () {
+        const userId = document.getElementById('deleteUserId').value.trim();
+        const resultEl = document.getElementById('deleteResult');
+        if (!userId) { resultEl.style.color = '#a33'; resultEl.textContent = 'Please enter a user ID'; return; }
+        try {
+          const resp = await fetch('/delete-user', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId })
+          });
+          const data = await resp.json();
+          if (resp.ok) {
+            resultEl.style.color = '#090';
+            resultEl.textContent = 'Deleted: ' + (data.userId || '');
+          } else {
+            resultEl.style.color = '#a33';
+            resultEl.textContent = 'Error: ' + (data.error || resp.status);
+          }
+        } catch (err) {
+          resultEl.style.color = '#a33';
+          resultEl.textContent = 'Network error';
+        }
+      });
+    })();
+  </script>
 
 </body>
 </html>
